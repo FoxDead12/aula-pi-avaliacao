@@ -1,23 +1,15 @@
-import { DataSource } from 'typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-export const databaseProviders = [
-    {
-      provide: 'DATA_SOURCE',
-      useFactory: async () => {
-        const dataSource = new DataSource({
-          type: 'mysql',
-          host: 'localhost',
-          port: 3306,
-          username: 'root',
-          password: 'root',
-          database: 'test',
-          entities: [
-              __dirname + '/../**/*.entity{.ts,.js}',
-          ],
-          synchronize: true,
-        });
-  
-        return dataSource.initialize();
-      },
-    },
-  ];
+export const typeOrmOptions: TypeOrmModule = {
+
+    type: "mysql",
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'pi-avaliacao',
+    entities: ['./database/tables/**'],
+    migrations: ["./database/migrations/**"],
+    migrationsTableName: "migration_table",
+    synchronize: false
+}
