@@ -1,24 +1,18 @@
-import { IFactoryService } from "src/interfaces/services/IFactoryService";
-import { UrlsComunication } from "./UrlsComunication";
+import { IFactoryService } from 'src/interfaces/services/IFactoryService';
+import { UrlsComunication } from './UrlsComunication';
 import { HttpService } from '@nestjs/axios';
-import { IUrlsComunication } from "src/interfaces/services/IUrlsComunication";
-import { ITurmaService } from "src/interfaces/services/ITurmaService";
-import { TurmaService } from "./TurmaService";
+import { IUrlsComunication } from 'src/interfaces/services/IUrlsComunication';
+import { ITurmaService } from 'src/interfaces/services/ITurmaService';
+import { TurmaService } from './TurmaService';
 
 export class FactoryService implements IFactoryService {
-    
-    constructor(
-        private _httpService: HttpService
-    ){}
-    
-    get ITurmaService(): ITurmaService {
+  constructor(private _httpService: HttpService) {}
 
-        return new TurmaService();
-    }
+  get ITurmaService(): ITurmaService {
+    return new TurmaService(this._httpService);
+  }
 
-    get IUrlsComunication(): IUrlsComunication {
-
-        return new UrlsComunication(this._httpService);
-    }
-
+  get IUrlsComunication(): IUrlsComunication {
+    return new UrlsComunication(this._httpService);
+  }
 }

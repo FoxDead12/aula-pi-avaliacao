@@ -11,14 +11,18 @@ import { HttpModule, HttpService } from '@nestjs/axios';
   imports: [
     HttpModule,
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot(typeOrmOptions)
+    TypeOrmModule.forRoot(typeOrmOptions),
   ],
   controllers: [AppController],
   providers: [DI],
 })
 export class AppModule {
-
-  constructor(private dataSource: DataSource, private configService: ConfigService, private httpService: HttpService, private DI: DI) {
+  constructor(
+    private dataSource: DataSource,
+    private configService: ConfigService,
+    private httpService: HttpService,
+    private DI: DI,
+  ) {
     DI.Build(httpService);
   }
 }

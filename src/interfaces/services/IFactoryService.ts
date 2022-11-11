@@ -1,9 +1,7 @@
-import { ITurmaService } from "./ITurmaService";
-import { IUrlsComunication } from "./IUrlsComunication";
+import { ITurmaService } from './ITurmaService';
+import { IUrlsComunication } from './IUrlsComunication';
 
 export interface IFactoryService {
-
-    IUrlsComunication: IUrlsComunication;
-    ITurmaService: ITurmaService;
-
+  IUrlsComunication: IUrlsComunication;
+  ITurmaService: ITurmaService;
 }
