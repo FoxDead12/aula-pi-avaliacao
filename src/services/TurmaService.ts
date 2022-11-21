@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { ITurmaService } from 'src/interfaces/services/ITurmaService';
-import { ITurma } from 'src/interfaces/types/ITurma';
+import { IHorario, ITurma } from 'src/interfaces/types/ITurma';
 
 export class TurmaService implements ITurmaService {
   constructor(private _httpService: HttpService) {}
@@ -22,6 +22,8 @@ export class TurmaService implements ITurmaService {
   async getOne(link: string): Promise<ITurma> {
     let getDataSucess = false;
     let numbTimes = 0;
+
+
     while (getDataSucess == false && numbTimes < 4) {
       try {
         //Aqui vai o codigo quando corre tudo certo
@@ -33,64 +35,19 @@ export class TurmaService implements ITurmaService {
         var usefolData: string[] = [];
         tempDataText.forEach((element) => {
           
-            console.log(element)
             if (element != '') {
             usefolData.push(element);
           }
         });
 
-        const nomeTurma = usefolData[0].toString().split(' ')[3];
-        const curso = usefolData[1].toString().split('-')[0];
-        const ano = usefolData[1].toString().split('-')[1].split(':')[1];
-
+        const nomeTurma = usefolData[0].toString().split(' ')[3]; //Buscar Nome
+        const curso = usefolData[1].toString().split('-')[0]; //Buscar Curso
+        const ano = usefolData[1].toString().split('-')[1].split(':')[1]; //Buscar Ano
+      
         //usefolData[13] - E a partir daqui que vamos buscar o horario
         //usefolData[usefolData.length - 2]
-        let tempCount = 0;
-        let horaInicio: string = '';
-        let horaFim: string = '';
-        for (let i = 13; i <= usefolData.length - 2; i++) {
-          const row = usefolData[i];
-          if (tempCount == 7) {
-            tempCount = 0;
-          }
-          if (tempCount == 0) {
-            const horas = row.split('-');
-            horaInicio = horas[0];
-            horaFim = horas[1];
-          }
-
-          //1 - Segunda
-          //2 - Terça
-          //3 - Quarta
-          //4 - Quinta
-          //5 - Sexta
-          //6 - Sabado
-
-          switch (tempCount) {
-            case 0: 
-            break;
-            case 1:
-              if (row !== '&nbsp;') {
-                const data = row.split('[');
-              }
-              break;
-            case 2:
-              break;
-            case 3:
-              break;
-            case 4:
-              break;
-            case 5:
-              break;
-            case 6:
-              break;
-            default:
-              break;
-          }
-
-          tempCount++;
-
-        }
+        this.getHorario(data);
+        
 
         getDataSucess = true;
 
@@ -101,5 +58,269 @@ export class TurmaService implements ITurmaService {
     }
 
     throw new Error('Method not implemented.');
+  }
+
+  getHorario(data: string): Partial<IHorario> {
+
+    const rs = data.toString().split("\n");
+    //Vou Buscar todas as linhas que existem para assim conseguir trabalhar no codigo.  
+
+    let tempData = new Array();
+    
+    let linha = 0;
+    let coluna = 0;
+    let readRow = false;
+
+    let arrayRowTemp = new Array();
+    rs.forEach((el) => {
+
+      if(el.includes('<tr>')) {
+        readRow = true;
+      }
+      else if(el.includes('</tr>')) {
+        linha++;
+        coluna = 0;
+        if(readRow == true) {
+          tempData.push(arrayRowTemp);
+          arrayRowTemp = []
+        }
+        readRow = false;
+      } 
+      else if(readRow == true) {
+
+        arrayRowTemp.push(el);
+        coluna++;
+      }
+    })
+
+
+    //Aqui já possuimos todas as linhas separadas em um array de 2 dimensões
+    let horario: IHorario = {
+      segunda: [] as null,
+      terca: [] as null,
+      quarta: [] as null,
+      quinta: [] as null,
+      sexta: [] as null,
+      sabado: [] as null
+    };
+    let numRow = 0;
+    tempData.forEach(row => {
+
+      // console.log(row)
+      let numCol = 0
+      let horaInicio = "";
+      
+      row.forEach(col => {
+
+        const colData = col.toString().replace(/<[^>]+>/g, '');
+        if(numCol == 0 && numRow != 0) {
+          horaInicio = colData;
+        }
+
+        if(colData != "&nbsp;" && numCol != 0 && numRow != 0) {
+                   
+          // console.log(colData)
+          const minutosAula = (Number(col.split('"')[5])-1 ) * 30;         
+          
+          const numerosHora = horaInicio.split("");
+          const data1 = new Date(2019, 5, 11, Number(numerosHora[0] + numerosHora[1]) + 1, Number(numerosHora[3] + numerosHora[4]), 0);
+          const data2 = new Date(2019, 5, 11, Number(numerosHora[8] + numerosHora[9]) + 1, Number(numerosHora[11] + numerosHora[12]), 0); 
+          
+
+          // console.log(data1.getTime());
+          const dataFim = data2.setMinutes(minutosAula);
+       
+          const indexDay = this.verDiaDaDisciplina(data1, new Date(dataFim), horario);
+          switch(indexDay) {
+            case 1: 
+              horario?.segunda?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+            break;
+            case 2: 
+              horario?.terca?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+            break;
+            case 3:
+              horario?.quarta?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)}) 
+            break;
+            case 4: 
+              horario?.quinta?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+            break;
+            case 5: 
+              horario?.sexta?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+
+            break;
+            case 6: 
+              horario?.sabado?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+            break;
+          }
+        }
+
+        numCol++;
+      })
+
+      numRow++;
+    })
+
+    console.log(horario);
+   
+    return;
+  }
+
+
+  verDiaDaDisciplina(horaFim: Date, horaInicio: Date, horario: IHorario): number {
+
+    let indexReturn = 0;
+    let find = false;
+
+    if(find == false) {
+
+      if(horario.segunda.length > 0) {
+
+        horario.segunda?.forEach((el) => {
+          
+          if(horaInicio.getTime() > el.horaInicio.getTime() && horaFim.getTime() < el.horaFim.getTime()) {
+            //Caso entre é porque esxite vaga...
+            // console.log("SEGUNDA - EXISTE AULA NESTE ESPAÇO");
+            indexReturn = 0;
+            find = false;
+          }
+          else {
+
+            indexReturn = 1;
+            find = true;
+          }
+        });
+      }
+      else {
+
+        indexReturn = 1;
+        find = true;
+      }
+    }
+
+    if(find == false) {
+
+      if(horario.terca.length > 0) {
+
+        horario.terca.forEach((el) => {
+          
+          if(horaInicio.getTime() > el.horaInicio.getTime() && horaFim.getTime() < el.horaFim.getTime()) {
+            //Caso entre é porque esxite vaga...
+            // console.log("TERÇA - EXISTE AULA NESTE ESPAÇO")
+            indexReturn = 0;
+            find = false;
+          }
+          else {
+
+            indexReturn = 2;
+            find = true;
+          }
+        });
+      } else {
+
+        indexReturn = 2;
+        find = true;
+      }
+    }
+
+    if(find == false) {
+
+      if(horario.quarta.length > 0) {
+        horario.quarta.forEach((el) => {
+          
+          if(horaInicio.getTime() > el.horaInicio.getTime() && horaFim.getTime() < el.horaFim.getTime()) {
+            //Caso entre é porque esxite vaga...
+            // console.log("QUARTA - EXISTE AULA NESTE ESPAÇO")
+            indexReturn = 0;
+            find = false;
+          }
+          else {
+
+            indexReturn = 3;
+            find = true;
+          }
+        });
+      }
+      else {
+        indexReturn = 3;
+          find = true;
+      }
+    }
+
+    if(find == false) {
+      if(horario.quinta.length > 0) {
+
+        horario.quinta.forEach((el) => {
+          
+          if(horaInicio.getTime() > el.horaInicio.getTime() && horaFim.getTime() < el.horaFim.getTime()) {
+            //Caso entre é porque esxite vaga...
+            // console.log("QUINTA - EXISTE AULA NESTE ESPAÇO")
+            indexReturn = 0;
+            find = false;
+          }
+          else {
+
+            indexReturn = 4;
+            find = true;
+          }
+        });
+      }
+      else {
+
+        indexReturn = 4;
+        find = true;
+      }
+    }
+
+    if(find == false) {
+
+      if(horario.sexta.length > 0) {
+
+        horario.sexta.forEach((el) => {
+          
+          if(horaInicio.getTime() > el.horaInicio.getTime() && horaFim.getTime() < el.horaFim.getTime()) {
+            //Caso entre é porque esxite vaga...
+            // console.log("SEXTA - EXISTE AULA NESTE ESPAÇO")
+            indexReturn = 0;
+            find = false;
+          }
+          else {
+
+            indexReturn = 5;
+            find = true;
+          }
+        });
+      } 
+      else {
+        indexReturn = 5;
+        find = true;
+      }
+    }
+
+    if(find == false) {
+
+      if(horario.sabado.length > 0) {
+
+        horario.sabado.forEach((el) => {
+          if(horaInicio.getTime() > el.horaInicio.getTime() && horaFim.getTime() < el.horaFim.getTime()) {
+            //Caso entre é porque esxite vaga...
+            // console.log("SABADO - EXISTE AULA NESTE ESPAÇO")
+            indexReturn = 0;
+            find = false;
+          }
+          else {
+
+            indexReturn = 6;
+            find = true;
+          }
+        });
+      }
+      else {
+        indexReturn = 6;
+        find = true;
+      }
+
+    }
+
+    return indexReturn;
   }
 }

@@ -7,17 +7,16 @@ export class AppController {
 
   @Get()
   async getHorarios() {
-    const mainUrl = 'https://horarios.ispgaya.pt/geral/';
+    const mainUrl = 'http://localhost/hor_exemplo/20220321/';
     const serviceUrl = this._DI.serviceFactory.IUrlsComunication;
     const urlsToAcess = await serviceUrl.getUrlsList(mainUrl);
     const separatedLinks = serviceUrl.separateUrls(mainUrl, urlsToAcess);
-
     //Agora tenho de buscar os dados da paginas e no fim guardar na base de dados
     // const setviceTurma = this._DI.serviceFactory.ITurmaService.getMany(separatedLinks.turma, mainUrl);
 
     const testResult = await this._DI.serviceFactory.ITurmaService.getOne(
-      'https://horarios.ispgaya.pt/geral/turma_GT1_21.html?638031812535043582'
+      'http://localhost/hor_exemplo/20220321/turma_GE2_18.html@637833011960118410.html'
     );
     console.log(testResult);
   }
-}
+}    

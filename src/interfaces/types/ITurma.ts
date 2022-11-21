@@ -1,15 +1,18 @@
 export interface ITurma {
   curso: string;
-  ano: number;
+  ano: string;
   nome: string;
-  horario: {
-    segunda: [
+  horario: IHorario;
+}
+
+export interface IHorario {
+      segunda: [
       {
         horaInicio: Date;
         horaFim: Date;
         disciplinaNome: string;
         professor: string;
-        sala: number;
+        sala: string;
       },
     ];
     terca: [
@@ -18,7 +21,7 @@ export interface ITurma {
         horaFim: Date;
         disciplinaNome: string;
         professor: string;
-        sala: number;
+        sala: string;
       },
     ];
     quarta: [
@@ -27,7 +30,7 @@ export interface ITurma {
         horaFim: Date;
         disciplinaNome: string;
         professor: string;
-        sala: number;
+        sala: string;
       },
     ];
     quinta: [
@@ -36,7 +39,7 @@ export interface ITurma {
         horaFim: Date;
         disciplinaNome: string;
         professor: string;
-        sala: number;
+        sala: string;
       },
     ];
     sexta: [
@@ -45,7 +48,7 @@ export interface ITurma {
         horaFim: Date;
         disciplinaNome: string;
         professor: string;
-        sala: number;
+        sala: string;
       },
     ];
     sabado: [
@@ -54,8 +57,7 @@ export interface ITurma {
           horaFim: Date;
           disciplinaNome: string;
           professor: string;
-          sala: number;
+          sala: string;
         },
       ];
-  };
 }
