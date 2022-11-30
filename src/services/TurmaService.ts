@@ -5,24 +5,28 @@ import { IHorario, ITurma } from 'src/interfaces/types/ITurma';
 export class TurmaService implements ITurmaService {
   constructor(private _httpService: HttpService) {}
 
-  getMany(listUrls: string[], mainUrl: string): Promise<ITurma[]> {
+  async getMany(listUrls: string[], mainUrl: string): Promise<ITurma[]> {
     let errosLinks = [];
-
-    listUrls.forEach(async (link) => {
+    const turmas: ITurma[] = [];
+    
+    for(const link of listUrls) {
       try {
         const result = await this.getOne(mainUrl + link);
+        turmas.push(result);
+        
       } catch (e) {
         errosLinks.push(link);
       }
-    });
+    }
 
-    return;
+    return turmas;
   }
 
   async getOne(link: string): Promise<ITurma> {
+
     let getDataSucess = false;
     let numbTimes = 0;
-
+    let turma: ITurma = undefined;
 
     while (getDataSucess == false && numbTimes < 4) {
       try {
@@ -46,8 +50,15 @@ export class TurmaService implements ITurmaService {
       
         //usefolData[13] - E a partir daqui que vamos buscar o horario
         //usefolData[usefolData.length - 2]
-        this.getHorario(data);
-        
+        const horario = this.getHorario(data);
+
+        turma = {
+          ano,
+          curso,
+          nome: nomeTurma,
+          horario: horario
+
+        }
 
         getDataSucess = true;
 
@@ -57,10 +68,10 @@ export class TurmaService implements ITurmaService {
       numbTimes++;
     }
 
-    throw new Error('Method not implemented.');
+    return turma
   }
 
-  getHorario(data: string): Partial<IHorario> {
+  getHorario(data: string): IHorario {
 
     const rs = data.toString().split("\n");
     //Vou Buscar todas as linhas que existem para assim conseguir trabalhar no codigo.  
@@ -125,31 +136,33 @@ export class TurmaService implements ITurmaService {
           const numerosHora = horaInicio.split("");
           const data1 = new Date(2019, 5, 11, Number(numerosHora[0] + numerosHora[1]) + 1, Number(numerosHora[3] + numerosHora[4]), 0);
           const data2 = new Date(2019, 5, 11, Number(numerosHora[8] + numerosHora[9]) + 1, Number(numerosHora[11] + numerosHora[12]), 0); 
-          
-
-          // console.log(data1.getTime());
           const dataFim = data2.setMinutes(minutosAula);
-       
+                 
+          const turmaDataArray = colData.replace('(', "").replace(")", '').split("[");
+          const disciplina = turmaDataArray[0].replace("]", '');
+          const professor = turmaDataArray[1].replace("]", '');
+          const sala = turmaDataArray[2];
+
           const indexDay = this.verDiaDaDisciplina(data1, new Date(dataFim), horario);
           switch(indexDay) {
             case 1: 
-              horario?.segunda?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+              horario?.segunda?.push({sala: sala, disciplinaNome: disciplina, professor: professor, horaInicio: data1, horaFim: new Date(dataFim)})
             break;
             case 2: 
-              horario?.terca?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+              horario?.terca?.push({sala: sala, disciplinaNome: disciplina, professor: professor, horaInicio: data1, horaFim: new Date(dataFim)})
             break;
             case 3:
-              horario?.quarta?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)}) 
+              horario?.quarta?.push({sala: sala, disciplinaNome: disciplina, professor: professor, horaInicio: data1, horaFim: new Date(dataFim)}) 
             break;
             case 4: 
-              horario?.quinta?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+              horario?.quinta?.push({sala: sala, disciplinaNome: disciplina, professor: professor, horaInicio: data1, horaFim: new Date(dataFim)})
             break;
             case 5: 
-              horario?.sexta?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+              horario?.sexta?.push({sala: sala, disciplinaNome: disciplina, professor: professor, horaInicio: data1, horaFim: new Date(dataFim)})
 
             break;
             case 6: 
-              horario?.sabado?.push({sala: '0', disciplinaNome: colData, professor: 'OLA', horaInicio: data1, horaFim: new Date(dataFim)})
+              horario?.sabado?.push({sala: sala, disciplinaNome: disciplina, professor: professor, horaInicio: data1, horaFim: new Date(dataFim)})
             break;
           }
         }
@@ -160,11 +173,9 @@ export class TurmaService implements ITurmaService {
       numRow++;
     })
 
-    console.log(horario);
    
-    return;
+    return horario;
   }
-
 
   verDiaDaDisciplina(horaFim: Date, horaInicio: Date, horario: IHorario): number {
 
