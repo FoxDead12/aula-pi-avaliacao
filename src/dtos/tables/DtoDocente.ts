@@ -1,9 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("Docentes")
 export class DtoDocente {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number;
    
     @Column()

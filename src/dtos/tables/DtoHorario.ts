@@ -1,10 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
 import { DtoTurma } from "./DtoTurma";
 
 @Entity("HorarioTurma")
 export class DtoHorarioTurma {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number;
    
     @Column()

@@ -9,15 +9,17 @@ export class DocenteService implements IDocenteService {
     async getMany(listUrls: string[], mainUrl: string): Promise<IDocente[]> {
         let errosLinks = [];
         const docentes: IDocente[] = [];
-        
+        let id = 0;
         for(const link of listUrls) {
             try {
                 const result = await this.getOne(mainUrl + link);
+                result.id = id;
                 docentes.push(result);
                 
             } catch (e) {
                 errosLinks.push(link);
             }
+            id++;
         }
 
         return docentes;
@@ -52,6 +54,7 @@ export class DocenteService implements IDocenteService {
             const horario = this.getHorario(data);
 
             docente = {
+              id: null,
             nome: nome,
             horario: horario
 

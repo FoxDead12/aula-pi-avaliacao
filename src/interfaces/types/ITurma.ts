@@ -1,4 +1,5 @@
 export interface ITurma {
+  id: number;
   curso: string;
   ano: string;
   nome: string;

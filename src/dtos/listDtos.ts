@@ -1,7 +1,8 @@
-import { DtoDocente } from "./DtoDocente";
-import { DtoHorarioTurma } from "./DtoHorario";
-import { DtoLinks } from "./DtoLinks";
-import { DtoTurma } from "./DtoTurma";
+import { DtoDocente } from "./tables/DtoDocente";
+import { DtoHorarioTurma } from "./tables/DtoHorario";
+import { DtoLinks } from "./tables/DtoLinks";
+import { DtoTurma } from "./tables/DtoTurma";
+
 
 export const listDtos = [
 

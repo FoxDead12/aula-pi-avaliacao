@@ -1,22 +1,46 @@
 import { HttpService } from '@nestjs/axios';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DtoTurma } from 'src/dtos/tables/DtoTurma';
 import { ITurmaService } from 'src/interfaces/services/ITurmaService';
 import { IHorario, ITurma } from 'src/interfaces/types/ITurma';
+import { Repository } from 'typeorm';
 
 export class TurmaService implements ITurmaService {
-  constructor(private _httpService: HttpService) {}
+  constructor(
+    private _httpService: HttpService,
+    @InjectRepository(DtoTurma)
+    private turmaRepository: Repository<DtoTurma>,
+  ) {}
+
+
+  async InsertAll(data: ITurma[]): Promise<void> {
+    
+    const dtos: DtoTurma[] = [];
+    data.forEach(turma => {
+      // const dto: DtoTurma = {
+      //   ano: turma.ano,
+      //   curso: turma
+      // }
+    })
+
+    throw new Error('Method not implemented.');
+  }
 
   async getMany(listUrls: string[], mainUrl: string): Promise<ITurma[]> {
     let errosLinks = [];
     const turmas: ITurma[] = [];
     
+    let id = 0;
     for(const link of listUrls) {
       try {
         const result = await this.getOne(mainUrl + link);
+        result.id = id;
         turmas.push(result);
         
       } catch (e) {
         errosLinks.push(link);
       }
+      id++;
     }
 
     return turmas;
@@ -53,6 +77,7 @@ export class TurmaService implements ITurmaService {
         const horario = this.getHorario(data);
 
         turma = {
+          id: null,
           ano,
           curso,
           nome: nomeTurma,
@@ -334,4 +359,6 @@ export class TurmaService implements ITurmaService {
 
     return indexReturn;
   }
+
+
 }

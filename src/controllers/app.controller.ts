@@ -16,7 +16,7 @@ export class AppController {
     
     const turmas = await this._DI.serviceFactory.ITurmaService.getMany(separatedLinks.turma, mainUrl);
     const docentes = await this._DI.serviceFactory.IDocenteService.getMany(separatedLinks.docentes, mainUrl);
-   
+    console.table(turmas);
     //Adicionar a base de dados os dados
   }
 }    
