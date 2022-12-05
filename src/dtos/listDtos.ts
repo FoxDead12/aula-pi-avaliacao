@@ -1,5 +1,6 @@
 import { DtoDocente } from "./tables/DtoDocente";
-import { DtoHorarioTurma } from "./tables/DtoHorario";
+import { DtoHorarioDocente } from "./tables/DtoHorarioDocente";
+import { DtoHorarioTurma } from "./tables/DtoHorarioTurma";
 import { DtoLinks } from "./tables/DtoLinks";
 import { DtoTurma } from "./tables/DtoTurma";
 
@@ -9,5 +10,6 @@ export const listDtos = [
     DtoTurma,
     DtoDocente,
     DtoLinks,
-    DtoHorarioTurma
+    DtoHorarioTurma,
+    DtoHorarioDocente
 ]

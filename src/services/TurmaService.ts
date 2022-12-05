@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DtoHorarioTurma } from 'src/dtos/tables/DtoHorarioTurma';
 import { DtoTurma } from 'src/dtos/tables/DtoTurma';
 import { ITurmaService } from 'src/interfaces/services/ITurmaService';
 import { IHorario, ITurma } from 'src/interfaces/types/ITurma';
@@ -10,21 +11,143 @@ export class TurmaService implements ITurmaService {
     private _httpService: HttpService,
     @InjectRepository(DtoTurma)
     private turmaRepository: Repository<DtoTurma>,
+    @InjectRepository(DtoHorarioTurma)
+    private horarioTurmaRepository: Repository<DtoHorarioTurma>,
   ) {}
 
 
-  async InsertAll(data: ITurma[]): Promise<void> {
+  async InsertAllHorarios(data: ITurma[]): Promise<void> {
+   
+    const dtos: DtoHorarioTurma[] = [];
+    let id = 0;
+    data.forEach(turma => {
+      const currentTurma: DtoTurma = {
+        ano: turma.ano,
+        curso: turma.curso,
+        horarioTurma: null,
+        id: turma.id,
+        nome: turma.nome
+      }
+
+      turma.horario.segunda.forEach(aula => {
+
+        const dto: DtoHorarioTurma = {
+          diaSemana: 1,
+          disciplina: aula.disciplinaNome,
+          horaFim: aula.horaFim.toTimeString(),
+          horaInicio: aula.horaInicio.toTimeString(),
+          id: id,
+          sala: aula.sala || '',
+          turma: currentTurma
+        }
+
+        dtos.push(dto);
+        id++;
+      })
+
+      turma.horario.terca.forEach(aula => {
+
+        const dto: DtoHorarioTurma = {
+          diaSemana: 2,
+          disciplina: aula.disciplinaNome,
+          horaFim: aula.horaFim.toTimeString(),
+          horaInicio: aula.horaInicio.toTimeString(),
+          id: id,
+          sala: aula.sala || '',
+          turma: currentTurma
+        }
+
+        dtos.push(dto);
+        id++;
+      })
+
+      turma.horario.quarta.forEach(aula => {
+
+        const dto: DtoHorarioTurma = {
+          diaSemana: 3,
+          disciplina: aula.disciplinaNome,
+          horaFim: aula.horaFim.toTimeString(),
+          horaInicio: aula.horaInicio.toTimeString(),
+          id: id,
+          sala: aula.sala || '',
+          turma: currentTurma
+        }
+
+        dtos.push(dto);
+        id++;
+      })
+
+      turma.horario.quinta.forEach(aula => {
+
+        const dto: DtoHorarioTurma = {
+          diaSemana: 4,
+          disciplina: aula.disciplinaNome,
+          horaFim: aula.horaFim.toTimeString(),
+          horaInicio: aula.horaInicio.toTimeString(),
+          id: id,
+          sala: aula.sala || '',
+          turma: currentTurma
+        }
+
+        dtos.push(dto);
+        id++;
+      })
+
+      turma.horario.segunda.forEach(aula => {
+
+        const dto: DtoHorarioTurma = {
+          diaSemana: 5,
+          disciplina: aula.disciplinaNome,
+          horaFim: aula.horaFim.toTimeString(),
+          horaInicio: aula.horaInicio.toTimeString(),
+          id: id,
+          sala: aula.sala || '',
+          turma: currentTurma
+        }
+
+        dtos.push(dto);
+        id++;
+      })
+
+      turma.horario.sabado.forEach(aula => {
+
+        const dto: DtoHorarioTurma = {
+          diaSemana: 6,
+          disciplina: aula.disciplinaNome,
+          horaFim: aula.horaFim.toTimeString(),
+          horaInicio: aula.horaInicio.toTimeString(),
+          id: id,
+          sala: aula.sala || '',
+          turma: currentTurma
+        }
+
+        dtos.push(dto);
+        id++;
+      })
+      
+    })
+
+    await this.horarioTurmaRepository.save(dtos);
+  }
+
+  async InsertAllTurmas(data: ITurma[]): Promise<void> {
     
     const dtos: DtoTurma[] = [];
     data.forEach(turma => {
-      // const dto: DtoTurma = {
-      //   ano: turma.ano,
-      //   curso: turma
-      // }
+      const dto: DtoTurma = {
+        ano: turma.ano,
+        curso: turma.curso,
+        horarioTurma: null,
+        id: turma.id,
+        nome: turma.nome
+      }
+
+      dtos.push(dto);
     })
 
-    throw new Error('Method not implemented.');
+    await this.turmaRepository.save(dtos);
   }
+  
 
   async getMany(listUrls: string[], mainUrl: string): Promise<ITurma[]> {
     let errosLinks = [];

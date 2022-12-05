@@ -1,8 +1,28 @@
 import { HttpService } from '@nestjs/axios';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DtoLinks } from 'src/dtos/tables/DtoLinks';
 import { IUrlsComunication } from 'src/interfaces/services/IUrlsComunication';
+import { Repository } from 'typeorm';
 
 export class UrlsComunication implements IUrlsComunication {
-  constructor(private _httpService: HttpService) {}
+  constructor(
+    private _httpService: HttpService,
+    @InjectRepository(DtoLinks)
+    private linksRepository: Repository<DtoLinks>,
+  ) {}
+  
+  async InsertUrls(data: string[]): Promise<void> {
+    const dtos: DtoLinks[] = [];
+    data.forEach(url => {
+      const dto: DtoLinks = {
+        id: 0,
+        url: url
+      }
+      dtos.push(dto);
+    })
+
+    await this.linksRepository.save(dtos);
+  }
 
   //Aqui vamos Buscar ao URL main todas as URL's para buscar os horarios
   async getUrlsList(url: string): Promise<string[]> {

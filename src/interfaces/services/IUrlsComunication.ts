@@ -4,4 +4,6 @@ export interface IUrlsComunication {
     mainUrl: string,
     urlsList: string[],
   ): { docentes: string[]; turma: string[] };
+
+  InsertUrls(data: string[]): Promise<void>;
 }

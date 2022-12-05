@@ -5,6 +5,6 @@ export interface ITurmaService {
   getOne(link: string): Promise<ITurma>;
   getHorario(data: string): Partial<IHorario>;
 
-  InsertAll(data: ITurma[]): Promise<void>;
-  
+  InsertAllTurmas(data: ITurma[]): Promise<void>;
+  InsertAllHorarios(data: ITurma[]): Promise<void>;
 }

@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
-import { DtoHorarioTurma } from "./DtoHorario";
+import { DtoHorarioTurma } from "./DtoHorarioTurma";
 
 @Entity("Turmas")
 export class DtoTurma {

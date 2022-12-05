@@ -16,7 +16,14 @@ export class AppController {
     
     const turmas = await this._DI.serviceFactory.ITurmaService.getMany(separatedLinks.turma, mainUrl);
     const docentes = await this._DI.serviceFactory.IDocenteService.getMany(separatedLinks.docentes, mainUrl);
-    console.table(turmas);
+    
+    await this._DI.serviceFactory.ITurmaService.InsertAllTurmas(turmas);
+    await this._DI.serviceFactory.ITurmaService.InsertAllHorarios(turmas);
+
+    await this._DI.serviceFactory.IDocenteService.InsertAllDocentes(docentes);
+    await this._DI.serviceFactory.IDocenteService.InsertAllHorarios(docentes);
+
+    await this._DI.serviceFactory.IUrlsComunication.InsertUrls(urlsToAcess);
     //Adicionar a base de dados os dados
   }
 }    

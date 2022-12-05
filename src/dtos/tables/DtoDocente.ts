@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { DtoHorarioDocente } from "./DtoHorarioDocente";
 
 @Entity("Docentes")
 export class DtoDocente {
@@ -8,4 +9,7 @@ export class DtoDocente {
    
     @Column()
     nome: string;
+
+    @OneToMany((type) => DtoHorarioDocente, (DtoHorarioDocente) => DtoHorarioDocente.docente)
+    horarioDocente: DtoHorarioDocente[];
 }

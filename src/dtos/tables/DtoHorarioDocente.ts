@@ -1,8 +1,9 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { DtoDocente } from "./DtoDocente";
 import { DtoTurma } from "./DtoTurma";
 
-@Entity("HorarioTurma")
-export class DtoHorarioTurma {
+@Entity("HorarioDocente")
+export class DtoHorarioDocente {
 
     @PrimaryColumn()
     id: number;
@@ -14,7 +15,7 @@ export class DtoHorarioTurma {
     disciplina: string;
 
     @Column()
-    sala:number;
+    sala: string;
 
     @Column()
     horaInicio: string;
@@ -22,6 +23,6 @@ export class DtoHorarioTurma {
     @Column()
     horaFim: string;
 
-    @ManyToOne((type) => DtoTurma, (DtoTurma) => DtoTurma.horarioTurma)
-    turma: DtoTurma;
+    @ManyToOne((type) => DtoDocente, (DtoDocente) => DtoDocente.horarioDocente)
+    docente: DtoDocente;
 }

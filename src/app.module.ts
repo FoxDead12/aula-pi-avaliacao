@@ -23,6 +23,6 @@ export class AppModule {
     private httpService: HttpService,
     private DI: DI,
   ) {
-    DI.Build(httpService);
+    DI.Build(httpService, dataSource);
   }
 }
